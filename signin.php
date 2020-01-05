@@ -25,14 +25,15 @@ include 'includes/logger.php'
         
             <h2 class="whiteText">Crearemos tu cuenta</h2>
             <p class="whiteText comment">Por favor llena el formulario</p>
-            
+
             <form class="inputsSign" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
                 <div class="input">
                     <label class = "whiteText" for="user">Usuario</label>
                     <input 
                     type="text" 
                     name="user"
-                    placeholder="Nombre de usuario"        
+                    placeholder="Nombre de usuario"   
+                    value = "<?php echo(isset($_GET['user']))?$_GET['user']:'';?>"  
                     >
                 </div><br>
                 <div class="input">
@@ -41,6 +42,7 @@ include 'includes/logger.php'
                     type="text" 
                     name="name"
                     placeholder="Nombre(s)" 
+                    value = "<?php echo(isset($_GET['name']))?$_GET['name']:'';?>"  
                     >
                 </div><br>
                 <div class="input">
@@ -49,6 +51,7 @@ include 'includes/logger.php'
                     type="text" 
                     name="lastName"
                     placeholder="Apellido Paterno" 
+                    value = "<?php echo(isset($_GET['lastName']))?$_GET['lastName']:'';?>"  
                     >
                 </div><br>
                 <div class="input">
@@ -57,6 +60,7 @@ include 'includes/logger.php'
                     type="text" 
                     name="lastName2"
                     placeholder="Apellido Materno" 
+                    value = "<?php echo(isset($_GET['lastName2']))?$_GET['lastName2']:'';?>"  
                     >
                 </div><br>
                 <div class="input">
@@ -65,6 +69,7 @@ include 'includes/logger.php'
                     type="email" 
                     name="email"
                     placeholder="correo electrónico" 
+                    value = "<?php echo(isset($_GET['email']))?$_GET['email']:'';?>"  
                     >
                 </div><br>
                 <div class="input">
@@ -87,10 +92,31 @@ include 'includes/logger.php'
                 <div class="input btnContainerSignIn">
                     <input class ="btn btnSignIn" type="submit" name = "signIn" value="Registrar">
                 </div>
-                <p class="comment ">¿Tienes un cuenta?
-                <input class ="btnChange comment whiteText" type="submit" name = "logIn" value="Entrar">
+                <p class="comment whiteText">¿Tienes un cuenta?
+                <input class ="btnChangeToLogin comment redText" type="submit" name = "signIn" value="Iniciar">
                 </p> 
             </form>
+
+            <?php 
+            if(isset($_GET['error'])){
+                if($_GET['error'] == "emptyfields"){
+                    echo '<p class="notification error"> Todos los campos deben ser llenados </p>';
+                } elseif($_GET['error'] == "invalidemail"){
+                    echo '<p class="notification error"> Por favor poner un email válido </p>';
+                } elseif($_GET['error'] == "invaliduser"){
+                    echo '<p class="notification error"> El usuario solo puede contener <br> letras y numeros sin espacios </p>';
+                } elseif($_GET['error'] == "invalidname"){
+                    echo '<p class="notification error"> El nombre no puede contener numeros ni espacios </p>';
+                } elseif($_GET['error'] == "invalidlastName"){
+                    echo '<p class="notification error"> El Apellido Paterno no puede contener <br> numeros ni espacios </p>';
+                } elseif($_GET['error'] == "invalidlastName2"){
+                    echo '<p class="notification error"> El Apellido Materno no puede contener <br> numeros ni espacios </p>';
+                } elseif($_GET['error'] == "invalidpassword"){
+                    echo '<p class="notification error"> Las contraseñas no coinciden </p>';
+                }
+              
+            }
+            ?>
 
         </div>
     </div>

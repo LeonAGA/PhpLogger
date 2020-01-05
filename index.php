@@ -37,13 +37,14 @@
 
         function validation_input(){
             
-            if(empty($this->user) || empty($this->password)){
+            if(empty($this->user)){
 
-                header("Location: index.php?error=emptyfields&user=".$this->user."&password=".$this->password);
+                header("Location: index.php?error=emptyuser");
                 
-            } else if(!preg_match("/^[a-zA-Z0-9]*$/", $this->user)){
-                header("Location: index.php?error=invaliduser");
+            } else if(empty($this->password)){
+                header("Location: index.php?error=emptypassword&user=".$this->user);
             }
+
 
         }
 
@@ -54,25 +55,16 @@
     switch ($action) {
         case 'Iniciar sesión':
             $logIn = new LogIn(); 
-            $logIn->set_user(clean_input($_POST["user"]));
-            $logIn->set_password(clean_input($_POST["password"]));
+            $logIn->set_user($_POST["user"]);
+            $logIn->set_password($_POST["password"]);
             $logIn->validation_input();
         break;
         case 'Regístrate':
         header("Location: signin.php?");
-        die();
         break;    
         default:
         break;
         }
-
-    function clean_input($data) {
-    $data = trim($data);
-    $data = stripslashes($data);
-    $data = htmlspecialchars($data);
-    return $data;
-    }
-
 
     ?>
 
@@ -91,7 +83,8 @@
                     <input 
                     type="text" 
                     name="user"
-                    placeholder="Usuario o correo electrónico"     
+                    placeholder="Usuario o correo electrónico"
+                    value = "<?php echo(isset($_GET['user']))?$_GET['user']:'';?>"       
                     >
                 </div><br>
                 <div class="input">
@@ -107,9 +100,19 @@
                     <input class ="btn btnLogIn" type="submit" name = "logIn" value="Iniciar sesión">
                 </div>
                 <p class="comment greyText">¿No tienes una cuenta?
-                <input class ="btnChange comment greenText" type="submit" name = "logIn" value="Regístrate">
+                <input class ="btnChangeToSignIn comment greenText" type="submit" name = "logIn" value="Regístrate">
                 </p> 
             </form>
+            <?php 
+            if(isset($_GET['error'])){
+                if($_GET['error'] == "emptyuser"){
+                    echo '<p class="notification error"> Por favor usa tu usuario o email </p>';
+                } elseif($_GET['error'] == "emptypassword"){
+                    echo '<p class="notification error"> Por favor escribe tu contraseña </p>';
+                }
+
+            }
+            ?>
         </div>
     </div>
 

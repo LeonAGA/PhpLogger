@@ -58,27 +58,32 @@ class SignIn {
 
     function validation_input(){
 
-        if(empty($this->user) || empty($this->password)) {
-            header("Location: index.php?error=emptyfields&user=".
-            $this->user); 
-            if(isset($_GET['error'])){
-                if($_GET['error'] == "emptyfields"){
-                    header("Location: index.php?error=em");
-                }
-               
-            }
-
+        if(empty($this->user) || empty($this->name) || empty($this->lastName) || empty($this->lastName2) ||
+           empty($this->email) || empty($this->password) || empty($this->passwordConfirmation)) {
+            header("Location: signin.php?error=emptyfields&user=".$this->user."&name=".$this->name."&lastName=".$this->lastName.
+            "&lastName2=".$this->lastName2."&email=".$this->email); 
+        } else if(!filter_var($this->email, FILTER_VALIDATE_EMAIL)){
+            header("Location: signin.php?error=invalidemail&user=".$this->user."&name=".$this->name."&lastName=".$this->lastName.
+            "&lastName2=".$this->lastName2); 
+        } else if(!preg_match("/^[a-zA-Z0-9]*$/", $this->user)){
+            header("Location: signin.php?error=invaliduser&name=".$this->name."&lastName=".$this->lastName.
+            "&lastName2=".$this->lastName2."&email=".$this->email); 
+        } else if(!preg_match("/^[a-zA-Z]*$/", $this->name)){
+            header("Location: signin.php?error=invalidname&user=".$this->user."&lastName=".$this->lastName.
+            "&lastName2=".$this->lastName2."&email=".$this->email); 
+        } else if(!preg_match("/^[a-zA-Z]*$/", $this->lastName)){
+            header("Location: signin.php?error=invalidlastName&user=".$this->user."&name=".$this->name.
+            "&lastName2=".$this->lastName2."&email=".$this->email); 
+        } else if(!preg_match("/^[a-zA-Z]*$/", $this->lastName2)){
+            header("Location: signin.php?error=invalidlastName2&user=".$this->user."&name=".$this->name."&lastName=".$this->lastName.
+            "&email=".$this->email);
+        } else if($this->password !== $this->passwordConfirmation){
+            header("Location: signin.php?error=invalidpassword&user=".$this->user."&name=".$this->name."&lastName=".$this->lastName.
+            "&lastName2=".$this->lastName2."&email=".$this->email); 
         } 
         
         
         
-    //     else if(!filter_var($this->email, FILTER_VALIDATE_EMAIL)){
-    //         header("Location: index.php?error=invalidemail&user=".$this->user);
-    //     } else if(!preg_match("/^[a-zA-Z0-9]*$/", $this->user)){
-    //         header("Location: index.php?error=invaliduser&email=".$this->email);
-    //    }  else if($this->password !== $this->passwordConfirmation){
-
-    //    } 
     //    else{
 
     //      //checar en la hoja .txt si existe el usuario
@@ -91,35 +96,39 @@ class SignIn {
 
 
     //    }
-    } 
+    
 
 }
+}
+$action = isset($_POST['signIn']) ? $_POST['signIn'] : null;
 
-// switch ($action) {
-//     case 'signIn':
-//        // $logIn = null;
-//         $signIn = new SignIn(); 
-//         $signIn->set_user(clean_input($_POST["user"]));
-//         $signIn->set_name(clean_input($_POST["name"]));
-//         $signIn->set_lastName(clean_input($_POST["lastName"]));
-//         $signIn->set_lastName2(clean_input($_POST["lastName2"]));
-//         $signIn->set_email(clean_input($_POST["email"]));
-//         $signIn->set_password(clean_input($_POST["password"]));
-//         $signIn->set_passwordConfirmation(clean_input($_POST["passwordConfirmation"])); 
-//         $signIn->validation_input();
+switch ($action) {
+    case 'Registrar':
+
+        $signIn = new SignIn(); 
+        $signIn->set_user(clean_input($_POST["user"]));
+        $signIn->set_name(clean_input($_POST["name"]));
+        $signIn->set_lastName(clean_input($_POST["lastName"]));
+        $signIn->set_lastName2(clean_input($_POST["lastName2"]));
+        $signIn->set_email(clean_input($_POST["email"]));
+        $signIn->set_password($_POST["password"]);
+        $signIn->set_passwordConfirmation($_POST["passwordConfirmation"]); 
+        $signIn->validation_input();
         
      
-//     break;
-//     case 'logIn':
-//         $signIn = null;
-//         $logIn = new LogIn(); 
-//         $logIn->set_user(clean_input($_POST["user"]));
-//         $logIn->set_password(clean_input($_POST["password"]));
-//         // $logIn->validation_input();
+    break;
+    case 'Iniciar':
+     header("Location: index.php?");
+    break;    
+    default:
+    break;
+    }
 
-//     break;    
-//     default:
-//     break;
-//     }
+    function clean_input($data) {
+        $data = trim($data);
+        $data = stripslashes($data);
+        $data = htmlspecialchars($data);
+        return $data;
+    }
 
 ?>
