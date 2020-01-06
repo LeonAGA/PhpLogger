@@ -46,16 +46,30 @@ class LogIn {
             header("Location: index.php?error=emptypassword&user=".$this->user);
             exit();
         } else{
-
-                $var = search_user($this->user, $this->password);
-                $fullName = '';
-                foreach ($var as $value){
-                    $fullName =  $fullName."/n".$value;
-                }
-               // header("Location: index.php?logIn=success&fullName=".$fullName); 
-               // exit();
+          
+            $var = search_user($this->user, $this->password);
+            $count = count($var);
+            // header("Location: indfex.php?error=jalando+++".$count);
+            // exit(); 
+            switch($count){
+                case 2:
+                    $fullName = '';
+                    foreach ($var as $value){
+                        $fullName =  $fullName."_".$value."_";
+                    }
+                    header("Location: index.php?logIn=success&fullName=".$fullName); 
+                    exit();
+                break;
+                case 1:
+                    header("Location: index.php?error=wrongpassword&user=".$this->user);
+                    exit();   
+                break;
+                default:
+                    header("Location: index.php?error=usernofound"); 
+                    exit();
+                break;
+            }                             
         }
-
 
     }
 
@@ -92,31 +106,28 @@ function search_user($user, $password){
     $file = fopen("users.txt", "a+");
     $read = file('users.txt');
     $i = 0;
-    while($i <= sizeof($read)-1){
 
-        header("Location: index.php?".trim($read[$i+5]));
-        exit();
-        if(strtolower(trim($read[$i])) == strtolower($user) ||
-           strtolower(trim($read[$i+4])) == strtolower($user) &&
+    while($i <= sizeof($read)-1){
+       
+        if((strtolower(trim($read[$i])) == strtolower($user) ||
+           strtolower(trim($read[$i+4])) == strtolower($user)) &&
            trim($read[$i+5]) == sha1($password)){
             array_push($var, trim($read[$i+1]));
             array_push($var, trim($read[$i+2]));
             fclose($file); 
             return $var;
         }elseif (strtolower(trim($read[$i])) == strtolower($user) ||
-              strtolower(trim($read[$i+4])) == strtolower($user)){
-            fclose($file); 
-            header("Location: indfex.php?error=wrongpassword&user=".$user);
-            exit();  
+                strtolower(trim($read[$i+4])) == strtolower($user)){     
+                array_push($var, trim($read[$i+1]));
+                fclose($file); 
+                return $var;
         }
         
         $i= $i+6;
+    
     }
-
     fclose($file); 
-    header("Location: Location: indejx.php?error=usernofound"); 
-    exit();
-
+    return $var;
 }
 
 ?>
@@ -147,7 +158,7 @@ function search_user($user, $password){
                     name="password"
                     placeholder="Contraseña"
                     >
-                    <p class = "greenText" id="show">Mostrar<p/>
+                    
                 </div><br>
                 <div class="input btnContainerLogIn">
                     <input class ="btn btnLogIn" type="submit" name = "logIn" value="Iniciar sesión">
@@ -178,10 +189,9 @@ function search_user($user, $password){
 
             if(isset($_GET['logIn'])){
                 if($_GET['logIn'] == "success"){
-                    echo '<p class="notification successful">Felicitaciones <br> ¡Has iniciado sesión!</p>';
+                    echo '<p class="notification successful">Felicitaciones <br> ¡Has iniciado sesión! <br>'.$_GET['fullName'].'</p>';
                 } 
             }
-
 
             ?>
         </div>

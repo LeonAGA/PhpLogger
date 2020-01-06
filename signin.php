@@ -189,6 +189,7 @@ switch ($action) {
     //Function to register a new user
     function user_registration(){
         
+        global $signIn;
         $file = fopen("users.txt", "a+");
         $read = file('users.txt');
         if(count($read) > 0){
@@ -278,7 +279,7 @@ switch ($action) {
                     name="passwordConfirmation"
                     placeholder="Confirmar contraseña"
                     >
-                    <p class = "whiteText" id="show">Mostrar<p/>
+                
                 </div><br>
                 <div class="input btnContainerSignIn">
                     <input class ="btn btnSignIn" type="submit" name = "signIn" value="Registrar">
