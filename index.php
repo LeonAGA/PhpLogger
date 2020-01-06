@@ -12,61 +12,114 @@
 
 <body>
 
-    <?php 
+<?php 
 
-    // global Properties
-    class LogIn {
+// global Properties
+class LogIn {
 
-        //Properties
-        private $user;
-        private $password;
+    //Properties
+    private $user;
+    private $password;
 
-        //Methods
-        function set_user($user) {
-            $this->user = $user;
-        }
-        function get_user() {
-            return $this->user;
-        }
-        function set_password($password) {
-            $this->password = $password;
-        }
-        function get_password() {
-            return $this->password;
-        }
+    //Methods
+    function set_user($user) {
+        $this->user = $user;
+    }
+    function get_user() {
+        return $this->user;
+    }
+    function set_password($password) {
+        $this->password = $password;
+    }
+    function get_password() {
+        return $this->password;
+    }
 
-        function validation_input(){
+    function validation_input(){
+        
+        if(empty($this->user)){
+
+            header("Location: index.php?error=emptyuser");
+            exit();
             
-            if(empty($this->user)){
+        } else if(empty($this->password)){
+            header("Location: index.php?error=emptypassword&user=".$this->user);
+            exit();
+        } else{
 
-                header("Location: index.php?error=emptyuser");
-                
-            } else if(empty($this->password)){
-                header("Location: index.php?error=emptypassword&user=".$this->user);
-            }
-
-
+                $var = search_user($this->user, $this->password);
+                $fullName = '';
+                foreach ($var as $value){
+                    $fullName =  $fullName."/n".$value;
+                }
+               // header("Location: index.php?logIn=success&fullName=".$fullName); 
+               // exit();
         }
+
 
     }
 
-    $action = isset($_POST['logIn']) ? $_POST['logIn'] : null;
+}
 
-    switch ($action) {
-        case 'Iniciar sesión':
-            $logIn = new LogIn(); 
-            $logIn->set_user($_POST["user"]);
-            $logIn->set_password($_POST["password"]);
-            $logIn->validation_input();
-        break;
-        case 'Regístrate':
-        header("Location: signin.php?");
-        break;    
-        default:
-        break;
+// Global properties
+$action = isset($_POST['logIn']) ? $_POST['logIn'] : null;
+$logIn = '';
+
+// The Begining of the script
+switch ($action) {
+    case 'Iniciar sesión':
+
+        global $logIn;
+        $logIn = new LogIn(); 
+        $logIn->set_user($_POST["user"]);
+        $logIn->set_password($_POST["password"]);
+        $logIn->validation_input();
+
+    break;
+    case 'Regístrate':
+
+    header("Location: signin.php");
+    exit();
+    break;    
+    default:
+    break;
+}
+
+// Function to search register users
+function search_user($user, $password){
+
+    $var = array();
+    $file = fopen("users.txt", "a+");
+    $read = file('users.txt');
+    $i = 0;
+    while($i <= sizeof($read)-1){
+
+        header("Location: index.php?".trim($read[$i+5]));
+        exit();
+        if(strtolower(trim($read[$i])) == strtolower($user) ||
+           strtolower(trim($read[$i+4])) == strtolower($user) &&
+           trim($read[$i+5]) == sha1($password)){
+            array_push($var, trim($read[$i+1]));
+            array_push($var, trim($read[$i+2]));
+            fclose($file); 
+            return $var;
+        }elseif (strtolower(trim($read[$i])) == strtolower($user) ||
+              strtolower(trim($read[$i+4])) == strtolower($user)){
+            fclose($file); 
+            header("Location: indfex.php?error=wrongpassword&user=".$user);
+            exit();  
         }
+        
+        $i= $i+6;
+    }
 
-    ?>
+    fclose($file); 
+    header("Location: Location: indejx.php?error=usernofound"); 
+    exit();
+
+}
+
+?>
 
     <div class="titleBar">
         <h1>Logger</h1>
@@ -106,12 +159,30 @@
             <?php 
             if(isset($_GET['error'])){
                 if($_GET['error'] == "emptyuser"){
-                    echo '<p class="notification error"> Por favor usa tu usuario o email </p>';
+                    echo '<p class="notification error">Por favor usa tu usuario o email</p>';
                 } elseif($_GET['error'] == "emptypassword"){
-                    echo '<p class="notification error"> Por favor escribe tu contraseña </p>';
+                    echo '<p class="notification error">Por favor escribe tu contraseña</p>';
+                } elseif($_GET['error'] == "wrongpassword"){
+                    echo '<p class="notification error">La contraseña es incorrecta</p>';
+                } elseif($_GET['error'] == "usernofound"){
+                    echo '<p class="notification error">No existe un usuario con esas credenciales</p>';
                 }
 
             }
+
+            if(isset($_GET['signIn'])){
+                if($_GET['signIn'] == "success"){
+                    echo '<p class="notification successful">Usuario registrado <br> ¡Inicia sesión!</p>';
+                } 
+            }
+
+            if(isset($_GET['logIn'])){
+                if($_GET['logIn'] == "success"){
+                    echo '<p class="notification successful">Felicitaciones <br> ¡Has iniciado sesión!</p>';
+                } 
+            }
+
+
             ?>
         </div>
     </div>

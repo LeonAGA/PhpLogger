@@ -300,8 +300,8 @@ opacity: 1;
 }
 
 .successful{
-    background-color: rgb(179, 241, 117, 0.8);
-    color:green;
+    background-color: var(--forth);
+    color: var(--fifth);
 }
 
 .error{
