@@ -18,7 +18,7 @@ A simple logger form in PHP
 </p>
 
 <p align="center">
-    <img src="/img/captures/logger2.png">
+    <img src="/img/captures/logger2.PNG">
 </p>
 
 ## Features
@@ -33,8 +33,7 @@ A simple logger form in PHP
 
 ## See it online
 
-- [`netlify`](https://finalfantasyvii.netlify.com)
-- [`codepen`](https://codepen.io/LeonAGA/pen/rqYZNP)
+- [`netlify`]()
 
 ## Links to other proyects
 
